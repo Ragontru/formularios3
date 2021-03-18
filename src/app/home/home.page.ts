@@ -11,8 +11,8 @@ import { NavController } from '@ionic/angular';
 export class HomePage implements OnInit {
 
   validations_form: FormGroup;
-  genders: Array<string>;
   matching_passwords_group: FormGroup;
+  genders: Array<string>;
 
   constructor(
     public formBuilder: FormBuilder,
@@ -25,6 +25,17 @@ export class HomePage implements OnInit {
       "Male",
       "Female"
     ];
+    this.matching_passwords_group = new FormGroup({
+      password: new FormControl('', Validators.compose([
+        Validators.maxLength(15),
+        Validators.minLength(8),
+        Validators.pattern('^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[.,-]).*$'),
+        Validators.required
+      ])),
+      confirmPassword: new FormControl('', Validators.required)
+    }, (formGroup: FormGroup) => {
+      return this.confirmPassword(formGroup);
+    });
     this.validations_form = this.formBuilder.group({
       username: new FormControl('', Validators.compose([
         this.validUsername,
@@ -42,18 +53,7 @@ export class HomePage implements OnInit {
       gender: new FormControl(this.genders[0], Validators.required),
       matching_passwords: this.matching_passwords_group,
       terms: new FormControl(false, Validators.pattern('true'))
-    }),
-      this.matching_passwords_group = new FormGroup({
-        password: new FormControl('', Validators.compose([
-          Validators.maxLength(15),
-          Validators.minLength(8),
-          Validators.pattern('^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[.,-]).*$'),
-          Validators.required
-        ])),
-        confirmPassword: new FormControl('', Validators.required)
-      }, (formGroup: FormGroup) => {
-        return this.confirmPassword(formGroup);
-      });
+    })
   }
 
   onSubmit(values) {
